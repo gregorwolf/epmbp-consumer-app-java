@@ -1,0 +1,4 @@
+### Read Entities
+GET http://localhost:8080/odata/v4/CatalogService/
+### Read Orders
+GET http://localhost:8080/odata/v4/CatalogService/Orders
