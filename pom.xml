@@ -40,6 +40,14 @@
 				<artifactId>javax.inject</artifactId>
 				<scope>provided</scope>
 			</dependency>
+			<!-- SAP Cloud SDK -->
+			<dependency>
+			  <groupId>com.sap.cloud.servicesdk</groupId>
+			  <artifactId>bom</artifactId>
+			  <version>1.38.0</version>
+			  <type>pom</type>
+			  <scope>import</scope>
+			</dependency>
 			<!-- CDS SERVICES -->
 			<dependency>
 				<groupId>com.sap.cds</groupId>
@@ -166,44 +174,6 @@
 					</executions>
 				</plugin>
 
-				<plugin>
-					<groupId>com.sap.cloud.sdk.datamodel</groupId>
-					<artifactId>odata-generator-maven-plugin</artifactId>
-					<version>3.13.0</version>
-					<executions>
-							<execution>
-									<id>generate-consumption</id>
-									<phase>generate-sources</phase>
-									<goals>
-											<goal>generate</goal>
-									</goals>
-									<configuration>
-											<inputDirectory>${project.basedir}/edmx</inputDirectory>
-											<outputDirectory>${project.build.directory}/vdm</outputDirectory>
-											<deleteOutputDirectory>true</deleteOutputDirectory>
-											<packageName>de.linuxdozent.vdm</packageName>
-									</configuration>
-							</execution>
-					</executions>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>3.0.0</version>
-					<executions>
-							<execution>
-									<phase>generate-sources</phase>
-									<goals>
-											<goal>add-source</goal>
-									</goals>
-									<configuration>
-											<sources>
-													<source>${project.build.directory}/vdm</source>
-											</sources>
-									</configuration>
-							</execution>
-					</executions>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 
