@@ -9,27 +9,30 @@ import com.sap.cloud.sdk.odatav2.connectivity.*;
 import com.sap.cloud.sdk.s4hana.connectivity.*;
 import com.sap.cds.services.EventContext;
 import com.sap.cds.services.cds.CdsService;
+import com.sap.cds.services.handler.EventHandler;
 import com.sap.cds.services.handler.annotations.*;
 import com.sap.cloud.sdk.cloudplatform.connectivity.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import cds.gen.catalogservice.*;
 import de.linuxdozent.vdm.namespaces.delinuxdozentvdmzepmbpsrv.EPMBusinessPartner;
 import de.linuxdozent.vdm.services.DefaultZEPMBPSRVEdmxService;
 
-public class CatalogService {
+@Component
+@ServiceName(CatalogService_.CDS_NAME)
+public class CatalogService implements EventHandler {
 
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
 
 	private final ErpHttpDestination destination = DestinationAccessor
 		.getDestination("NPL").asHttp().decorate(DefaultErpHttpDestination::new);
 
-
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
-	public void afterReadBooks(EventContext context) {
-		logger.info("Read EPMBusinessPartners:" + context.toString());
+	public void afterReadBooks(CdsReadEventContext context) {
+		System.out.println("Read EPMBusinessPartners:" + context.toString());
 	}
 /*
 	@Query(serviceName = "CatalogService", entity = "EPMBusinessPartners")
