@@ -25,3 +25,7 @@ hs_err*
 
 .vscode
 .idea
+
+
+# added by cds deploy
+connection.properties
