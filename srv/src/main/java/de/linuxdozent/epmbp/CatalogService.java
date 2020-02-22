@@ -2,32 +2,37 @@ package de.linuxdozent.epmbp;
 
 import java.util.*;
 
-import com.sap.cloud.sdk.service.prov.api.annotations.*;
-import com.sap.cloud.sdk.service.prov.api.*;
 import com.sap.cloud.sdk.service.prov.api.operations.Query;
 import com.sap.cloud.sdk.service.prov.api.request.*;
 import com.sap.cloud.sdk.service.prov.api.response.*;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DefaultHttpDestination;
-import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
-import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestinationProperties;
 import com.sap.cloud.sdk.odatav2.connectivity.*;
+import com.sap.cloud.sdk.s4hana.connectivity.*;
+import com.sap.cds.services.EventContext;
+import com.sap.cds.services.cds.CdsService;
+import com.sap.cds.services.handler.annotations.*;
+import com.sap.cloud.sdk.cloudplatform.connectivity.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sap.cloud.sdk.s4hana.connectivity.*;
+import cds.gen.catalogservice.*;
 import de.linuxdozent.vdm.namespaces.delinuxdozentvdmzepmbpsrv.EPMBusinessPartner;
 import de.linuxdozent.vdm.services.DefaultZEPMBPSRVEdmxService;
 
 public class CatalogService {
 
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
-	
-	private static final String DESTINATION_NAME = "NPL"; // Refers to the destination created in Step 6
 
-	private final DefaultHttpDestination destination = DestinationAccessor.getDestination(DESTINATION_NAME).;
+	private final ErpHttpDestination destination = DestinationAccessor
+		.getDestination("NPL").asHttp().decorate(DefaultErpHttpDestination::new);
 
-	@Query(serviceName = "S4BookshopService", entity = "EPMBusinessPartners")
+
+	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
+	public void afterReadBooks(EventContext context) {
+		logger.info("Read EPMBusinessPartners:" + context.toString());
+	}
+/*
+	@Query(serviceName = "CatalogService", entity = "EPMBusinessPartners")
 	public QueryResponse queryEPMBusinessPartner(QueryRequest qryRequest) {
 
 		QueryResponse queryResponse;
@@ -58,5 +63,5 @@ public class CatalogService {
 
 		return queryResponse;
 	}
-
+*/
 }
