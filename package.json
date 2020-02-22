@@ -11,7 +11,8 @@
         "deploy": "cds deploy"
     },
     "dependencies": {
-        "@sap/cds": "^3.0.0"
+        "@sap/cds": "^3.0.0",
+        "sqlite3": "^4.1.1"
     },
     "devDependencies": {
         "@sap/edmx2csn": "^1.0.8"
