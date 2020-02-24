@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@sap/cds": "^3.0.0",
-    "sqlite3": "^4.1.1",
     "hdb": "^0.17.1"
   },
   "devDependencies": {
+    "sqlite3": "^4.1.1",
     "@sap/edmx2csn": "^1.0.8",
     "@sap/hdi-deploy": "^3.11.6"
   },
@@ -33,9 +33,6 @@
           "db",
           "srv"
         ],
-        "credentials": {
-          "database": "sqlite.db"
-        },
         "[production]": {
           "kind": "hana"
         }
