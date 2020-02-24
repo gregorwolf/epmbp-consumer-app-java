@@ -7,7 +7,7 @@ import com.sap.cloud.sdk.service.prov.api.request.*;
 import com.sap.cloud.sdk.service.prov.api.response.*;
 import com.sap.cloud.sdk.odatav2.connectivity.*;
 import com.sap.cloud.sdk.s4hana.connectivity.*;
-import com.sap.cds.services.EventContext;
+import com.sap.cds.services.cds.CdsReadEventContext;
 import com.sap.cds.services.cds.CdsService;
 import com.sap.cds.services.handler.EventHandler;
 import com.sap.cds.services.handler.annotations.*;
