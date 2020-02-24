@@ -27,8 +27,7 @@ public class CatalogService implements EventHandler {
 
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
 
-	private final ErpHttpDestination destination = DestinationAccessor
-		.getDestination("NPL").asHttp().decorate(DefaultErpHttpDestination::new);
+	// Destination destination = DestinationAccessor.getDestination("NPL");
 
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
 	public void afterReadBooks(CdsReadEventContext context) {
@@ -53,7 +52,7 @@ public class CatalogService implements EventHandler {
 					.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
 					.top(top >= 0 ? top : 50)
 					.skip(skip >= 0 ? skip : -1)
-					.execute(destination);
+					.execute(destination.asHttp());
 			queryResponse = QueryResponse.setSuccess().setData(EPMBusinessPartners).response();
 
 		} catch (final ODataException e) {
