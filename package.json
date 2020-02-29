@@ -5,6 +5,7 @@
   "license": "ISC",
   "repository": "<Add your repository here>",
   "scripts": {
+    "setup": "npm install && npm run build && npm run deploy",
     "build": "cds build/all --clean",
     "edmx2csn": "node_modules/@sap/edmx2csn/bin/edmx2csn.js -i srv/external/ZEPM_BP_SRV.edmx.xml -o srv/external/csn/ZEPM_BP_SRV.json",
     "setdestination": "export destinations='[{name: \"NPL\", url: \"http://localhost:3000/v2\"}]'",
