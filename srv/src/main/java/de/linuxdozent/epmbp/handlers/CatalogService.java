@@ -1,21 +1,16 @@
-package de.linuxdozent.epmbp;
+package de.linuxdozent.epmbp.handlers;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.sap.cloud.sdk.service.prov.api.operations.Query;
-import com.sap.cloud.sdk.service.prov.api.request.*;
-import com.sap.cloud.sdk.service.prov.api.response.*;
-import com.sap.cloud.sdk.odatav2.connectivity.*;
-import com.sap.cloud.sdk.s4hana.connectivity.*;
+import org.springframework.stereotype.Component;
+
+import com.sap.cds.services.cds.CdsCreateEventContext;
 import com.sap.cds.services.cds.CdsReadEventContext;
 import com.sap.cds.services.cds.CdsService;
 import com.sap.cds.services.handler.EventHandler;
-import com.sap.cds.services.handler.annotations.*;
-import com.sap.cloud.sdk.cloudplatform.connectivity.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import com.sap.cds.services.handler.annotations.On;
+import com.sap.cds.services.handler.annotations.ServiceName;
 
 import cds.gen.catalogservice.*;
 import de.linuxdozent.vdm.namespaces.delinuxdozentvdmzepmbpsrv.EPMBusinessPartner;
@@ -25,14 +20,14 @@ import de.linuxdozent.vdm.services.DefaultZEPMBPSRVEdmxService;
 @ServiceName(CatalogService_.CDS_NAME)
 public class CatalogService implements EventHandler {
 
-	Logger logger = LoggerFactory.getLogger(CatalogService.class);
-
-	// Destination destination = DestinationAccessor.getDestination("NPL");
+	private Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
-	public void afterReadBooks(CdsReadEventContext context) {
+	public void onRead(CdsReadEventContext context) {
 		System.out.println("Read EPMBusinessPartners:" + context.toString());
+		context.setResult(epmBPs.values());
 	}
+	
 /*
 	@Query(serviceName = "CatalogService", entity = "EPMBusinessPartners")
 	public QueryResponse queryEPMBusinessPartner(QueryRequest qryRequest) {

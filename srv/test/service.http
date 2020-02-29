@@ -2,3 +2,12 @@
 GET http://localhost:8080/odata/v4/CatalogService/
 ### Read Orders
 GET http://localhost:8080/odata/v4/CatalogService/Orders
+
+### Create EPMBusinessPartner
+POST http://localhost:8080/odata/v4/CatalogService/EPMBusinessPartners
+Content-Type: application/json
+
+{"BpId": "43", "CompanyName": "SAP", "City": "Walldorf", "Street": "Hasso-Plattner-Ring"}
+
+### Read EPMBusinessPartners
+GET http://localhost:8080/odata/v4/CatalogService/EPMBusinessPartners
