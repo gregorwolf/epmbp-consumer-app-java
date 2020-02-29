@@ -14,7 +14,7 @@
     "start:cloud": "mvn spring-boot:run -Dspring-boot.run.profiles=cloud"
   },
   "dependencies": {
-    "@sap/cds": "^3.0.0",
+    "@sap/cds": "^3.31.1",
     "hdb": "^0.17.1"
   },
   "devDependencies": {
