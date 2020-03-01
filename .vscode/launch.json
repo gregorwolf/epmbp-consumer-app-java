@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Application<epmbp>",
+            "request": "launch",
+            "env": {
+                "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+                "DEBUG": "X",
+                "destinations": "[{name: \"NPL\", url: \"http://localhost:3000/v2\"}]",
+            },
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "de.linuxdozent.epmbp.Application",
+            "projectName": "epmbp",
+            "args": ""
+        }
+    ]
+}

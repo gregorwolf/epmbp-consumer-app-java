@@ -4,19 +4,11 @@ This example application is still work in progress. It should demonstrate how to
 
 ## Run local
 
-To run against the local mock service [epmbp-mock-service](https://github.com/gregorwolf/epmbp-mock-service) you have to create a file named *default-env.json* with the following content:
+To run against the local mock service [epmbp-mock-service](https://github.com/gregorwolf/epmbp-mock-service) you have to set the environment variable destinations:
 
-```
-{
-  "VCAP_SERVICES": {
-  },
-  "destinations": [
-    {
-      "name": "NPL",
-      "url": "http://localhost:3000/v2"
-    }
-  ]
-}
+```bash
+#!/bin/bash
+export destinations='[{name: "NPL", url: "http://localhost:3000/v2"}]'
 ```
 
 Then execute:
