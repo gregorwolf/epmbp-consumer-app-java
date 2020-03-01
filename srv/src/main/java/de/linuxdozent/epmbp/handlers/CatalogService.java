@@ -35,6 +35,12 @@ public class CatalogService implements EventHandler {
 	
 	private Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
+    @On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
+    public void onCreate(CdsCreateEventContext context) {
+        context.getCqn().entries().forEach(e -> epmBPs.put(e.get("BpId"), e));
+        context.setResult(context.getCqn().entries());
+    }
+
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
 	public void onRead(CdsReadEventContext context) {		
 		System.out.println("destinations: " + System.getenv("destinations"));
@@ -60,6 +66,7 @@ public class CatalogService implements EventHandler {
 						.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
 						.execute(destination.asHttp());
 				// How to convert List EPMBusinessPartners to Map epmBPs
+				// EPMBusinessPartners.forEach(e -> epmBPs.put(e, e));
 			} catch (final ODataException e) {
 				logger.error("Error occurred with the Query operation: " + e.getMessage(), e);
 				ErrorResponse er = ErrorResponse.getBuilder()
