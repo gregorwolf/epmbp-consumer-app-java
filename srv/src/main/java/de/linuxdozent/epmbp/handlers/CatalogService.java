@@ -1,6 +1,7 @@
 package de.linuxdozent.epmbp.handlers;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.odatav2.connectivity.ODataException;
+import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
 import com.sap.cloud.sdk.service.prov.api.response.ErrorResponse;
 import com.sap.cloud.sdk.service.prov.api.response.QueryResponse;
 
@@ -33,49 +35,61 @@ public class CatalogService implements EventHandler {
 	
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
 	
-	private Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
+	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
-    @On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
-    public void onCreate(CdsCreateEventContext context) {
-        context.getCqn().entries().forEach(e -> epmBPs.put(e.get("BpId"), e));
-        context.setResult(context.getCqn().entries());
-    }
+	@On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
+	public void onCreate(final CdsCreateEventContext context) {
+		context.getCqn().entries().forEach(e -> epmBPs.put(e.get("BpId"), e));
+		context.setResult(context.getCqn().entries());
+	}
 
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
-	public void onRead(CdsReadEventContext context) {		
+	public void onRead(final CdsReadEventContext context) {
 		System.out.println("destinations: " + System.getenv("destinations"));
 
 		try {
-			Destination destination = DestinationAccessor.getDestination("NPL");
-			if(context.getCqn().limit().isPresent()) {
-				CqnLimit limit = context.getCqn().limit().get();
-				CqnValue rows = limit.rows();
+			final Destination destination = DestinationAccessor.getDestination("NPL");
+			if (context.getCqn().limit().isPresent()) {
+				final CqnLimit limit = context.getCqn().limit().get();
+				final CqnValue rows = limit.rows();
 				System.out.println("rows:" + rows.toString());
 			}
 			System.out.println("Read EPMBusinessPartners:" + context.toString());
-			
+
 			try {
 				// Create Map containing request header information
-				Map<String, String> requestHeaders = new HashMap<>();
+				final Map<String, String> requestHeaders = new HashMap<>();
 				requestHeaders.put("Content-Type", "application/json");
-	
-				final List<EPMBusinessPartner> EPMBusinessPartners = 
-					new DefaultZEPMBPSRVEdmxService().getAllEPMBusinessPartner()
+
+				final List<EPMBusinessPartner> EPMBusinessPartners = new DefaultZEPMBPSRVEdmxService()
+						.getAllEPMBusinessPartner()
 						.withHeaders(requestHeaders)
 						.onRequestAndImplicitRequests()
 						.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
 						.execute(destination.asHttp());
+				final int size = EPMBusinessPartners.size();
+				logger.info("Number of EPMBusinessPartners: " + size);
+
 				// How to convert List EPMBusinessPartners to Map epmBPs
-				// EPMBusinessPartners.forEach(e -> epmBPs.put(e, e));
+				final Iterator epmBPiterator = EPMBusinessPartners.iterator();
+				while (epmBPiterator.hasNext()) {
+					final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
+					try {
+						Map<String, Object> epmBPfields = epmBP.getCustomFields();
+						epmBPs.put(epmBP.getCustomField(EPMBusinessPartner.BUSINESS_PARTNER_ID), epmBPfields);
+					} catch (final NoSuchEntityFieldException e) {
+						logger.error("Error occurred with the Query operation: " + e.getMessage());
+					}
+				}
 			} catch (final ODataException e) {
 				logger.error("Error occurred with the Query operation: " + e.getMessage(), e);
-				ErrorResponse er = ErrorResponse.getBuilder()
+				final ErrorResponse er = ErrorResponse.getBuilder()
 						.setMessage("Error occurred with the Query operation: " + e.getMessage()).setStatusCode(500)
 						.setCause(e).response();
 			}
-	
-			context.setResult(epmBPs.values());	
-		} catch (DestinationAccessException e) {
+
+			context.setResult(epmBPs.values());
+		} catch (final DestinationAccessException e) {
 			System.out.println("Message: " + e.getMessage());
 		}	
 		
