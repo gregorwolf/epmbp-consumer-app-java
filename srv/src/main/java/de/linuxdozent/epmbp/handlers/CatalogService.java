@@ -25,7 +25,7 @@ import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldExcep
 import com.sap.cloud.sdk.service.prov.api.response.ErrorResponse;
 
 import cds.gen.catalogservice.*;
-import de.linuxdozent.vdm.namespaces.delinuxdozentvdmzepmbpsrv.EPMBusinessPartner;
+import de.linuxdozent.vdm.namespaces.zepmbpsrvedmx.EPMBusinessPartner;
 import de.linuxdozent.vdm.services.DefaultZEPMBPSRVEdmxService;
 
 @Component
