@@ -1,0 +1,31 @@
+## Generated mta.yaml based on template version 0.2.0
+## appName = epmbp-consumer-app-java
+## language=java; multiTenant=false
+## approuter=
+_schema-version: '3.1'
+ID: epmbp-consumer-app-java
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true  
+build-parameters:
+  before-all:
+   - builder: custom
+     commands:
+      - npm install
+
+modules:
+ # --------------------- SERVER MODULE ------------------------
+ - name: epmbp-consumer-app-java-srv
+ # ------------------------------------------------------------
+   type: java
+   path: gen/srv
+   properties:
+     EXIT: 1  # required by deploy.js task to terminate 
+   build-parameters:
+      builder: custom
+      commands: [ mvn clean package ]
+      build-result: "target/*.[wj]ar"
+
+
+
