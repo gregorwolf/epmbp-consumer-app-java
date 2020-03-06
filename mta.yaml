@@ -15,17 +15,56 @@ build-parameters:
       - npm install
 
 modules:
+  - name: epmbp-consumer-app-java-db
+    type: hdb
+    path: db
+    build-parameters:
+      ignore: ["node_modules/"]
+    parameters:
+      memory: 256M
+      disk-quota: 256M
+    requires:
+      - name: epmbp-consumer-app-java-db-hdi-container
  # --------------------- SERVER MODULE ------------------------
- - name: epmbp-consumer-app-java-srv
- # ------------------------------------------------------------
-   type: java
-   path: gen/srv
-   properties:
-     EXIT: 1  # required by deploy.js task to terminate 
-   build-parameters:
+  - name: epmbp-consumer-app-java-srv
+    type: java
+    path: srv
+    properties:
+      EXIT: 1  # required by deploy.js task to terminate 
+    build-parameters:
       builder: custom
       commands: [ mvn clean package ]
       build-result: "target/*.[wj]ar"
+    provides:
+      - name: srv_api
+        properties:
+          url: ${default-url}
+    requires:
+      - name: epmbp-consumer-app-java-db-hdi-container
+      - name: epmbp-consumer-app-java-uaa
+      - name: epmbp-consumer-app-java-destination-service
+      - name: epmbp-consumer-app-java-connectivity-service
 
-
-
+resources:
+  - name: epmbp-consumer-app-java-db-hdi-container
+    parameters:
+      service: hanatrial
+      service-plan: hdi-shared
+    type: com.sap.xs.hdi-container
+    properties:
+      hdi-container-name: ${service-name}
+  - name: epmbp-consumer-app-java-uaa
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+    type: com.sap.xs.uaa
+  - name: epmbp-consumer-app-java-destination-service
+    parameters:
+       service-plan: lite
+       service: destination
+    type: org.cloudfoundry.managed-service
+  - name: epmbp-consumer-app-java-connectivity-service
+    parameters:
+       service-plan: lite
+       service: connectivity
+    type: org.cloudfoundry.managed-service

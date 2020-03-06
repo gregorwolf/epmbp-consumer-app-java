@@ -7,14 +7,17 @@
   "scripts": {
     "setup": "npm install && npm run build && npm run deploy",
     "build": "cds build/all --clean",
+    "build:xs-security": "cds compile srv/ --to xsuaa  > xs-security.json",
+    "build:cf": "mbt build -p cf",
     "edmx2csn": "node_modules/@sap/edmx2csn/bin/edmx2csn.js -i srv/external/ZEPM_BP_SRV.edmx.xml -o srv/external/csn/ZEPM_BP_SRV.json",
     "schema": "cds compile srv --to sql > srv/src/main/resources/schema.sql",
     "deploy": "cds deploy",
+    "deploy:cf": "cf deploy mta_archives/epmbp-consumer-app-java_1.0.0.mtar",
     "start": "mvn spring-boot:run",
     "start:cloud": "mvn spring-boot:run -Dspring-boot.run.profiles=cloud"
   },
   "dependencies": {
-    "@sap/cds": "^3.31.1",
+    "@sap/cds": "^3.31.2",
     "hdb": "^0.17.1"
   },
   "devDependencies": {
