@@ -1,9 +1,7 @@
 using my.bookshop as my from '../db/extended';
 using ZEPM_BP_SRV as EPM_BP_API from './external/csn/ZEPM_BP_SRV.json';
 
-// @(requires: 'authenticated-user')
-
-service CatalogService {
+service CatalogService @(requires: 'authenticated-user') {
   
   entity Books as projection on my.Books;
   
