@@ -23,7 +23,6 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.odatav2.connectivity.ODataException;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
 import com.sap.cloud.sdk.service.prov.api.response.ErrorResponse;
-import com.sap.cloud.sdk.service.prov.api.response.QueryResponse;
 
 import cds.gen.catalogservice.*;
 import de.linuxdozent.vdm.namespaces.delinuxdozentvdmzepmbpsrv.EPMBusinessPartner;
@@ -75,8 +74,10 @@ public class CatalogService implements EventHandler {
 				while (epmBPiterator.hasNext()) {
 					final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
 					try {
-						Map<String, Object> epmBPfields = epmBP.getCustomFields();
-						epmBPs.put(epmBP.getCustomField(EPMBusinessPartner.BUSINESS_PARTNER_ID), epmBPfields);
+						Map<String, Object> epmBPfields = new HashMap<>();
+						epmBPfields.put(EPMBusinessPartner.BUSINESS_PARTNER_ID.getFieldName(), epmBP.getBusinessPartnerID());
+						epmBPfields.put(EPMBusinessPartner.COMPANY.getFieldName(), epmBP.getCompany());
+						epmBPs.put(epmBP.getBusinessPartnerID(), epmBPfields);
 					} catch (final NoSuchEntityFieldException e) {
 						logger.error("Error occurred with the Query operation: " + e.getMessage());
 					}
