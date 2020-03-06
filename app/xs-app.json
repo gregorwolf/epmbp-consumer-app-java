@@ -1,0 +1,39 @@
+{
+  "welcomeFile": "/app/index.html",
+  "authenticationMethod": "route",
+  "logout": {
+    "logoutEndpoint": "/do/logout",
+    "logoutPage": "/app/logout.html"
+  },
+  "routes": [
+    {
+      "source": "/odata/(.*)$",
+      "target": "/odata/$1",
+      "authenticationType": "xsuaa",
+      "destination": "srv_api",
+      "csrfProtection": true
+    },
+    {
+      "source": "/api/(.*)$",
+      "target": "/api/$1",
+      "authenticationType": "xsuaa",
+      "destination": "srv_api",
+      "csrfProtection": true
+    },
+    {
+      "source": "/sap/(.*)$",
+      "target": "/sap/$1",
+      "destination": "NPL"
+    },
+    {
+      "source": "^/app/logout.html$", 
+      "localDir": "webapp", 
+      "authenticationType": "none"
+    },
+    {
+      "source": "^/app/(.*)$",
+      "target": "$1",
+      "localDir": "webapp"
+    }
+  ]
+}

@@ -44,6 +44,26 @@ modules:
       - name: epmbp-consumer-app-java-uaa
       - name: epmbp-consumer-app-java-destination-service
       - name: epmbp-consumer-app-java-connectivity-service
+ # --------------------- UI MODULE ------------------------
+  - name: epmbp-consumer-app-app
+    type: nodejs
+    path: app
+    build-parameters:
+      ignore: ["node_modules/"]
+    parameters:
+      memory: 256M
+      disk-quota: 1024M
+    requires:
+      - name: epmbp-consumer-app-java-destination-service
+      - name: epmbp-consumer-app-java-connectivity-service
+      - name: epmbp-consumer-app-java-uaa
+      - name: srv_api
+        group: destinations
+        properties:
+            forwardAuthToken: true
+            strictSSL: false
+            name: srv_api
+            url: ~{url}
 
 resources:
   - name: epmbp-consumer-app-java-db-hdi-container
