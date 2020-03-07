@@ -17,6 +17,7 @@ node_modules/
 .mta/
 *.mtar
 Makefile*
+mta-op*
 
 *.log*
 gc_history*

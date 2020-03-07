@@ -45,7 +45,7 @@ modules:
       - name: epmbp-consumer-app-java-destination-service
       - name: epmbp-consumer-app-java-connectivity-service
  # --------------------- UI MODULE ------------------------
-  - name: epmbp-consumer-app-app
+  - name: epmbp-consumer-app-java-app
     type: nodejs
     path: app
     build-parameters:
