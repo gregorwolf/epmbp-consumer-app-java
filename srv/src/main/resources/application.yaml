@@ -7,3 +7,8 @@ spring:
     initialization-mode: never
     hikari:
       maximum-pool-size: 1
+
+cds:
+  security.mock.users:
+    - name: admin
+      password: admin

@@ -47,6 +47,7 @@ public class CatalogService implements EventHandler {
 		System.out.println("destinations: " + System.getenv("destinations"));
 
 		try {
+			// Maybe needed to get the JWT: AuthenticatedUserClaimProvider.INSTANCE.getUserClaim()
 			final Destination destination = DestinationAccessor.getDestination("NPL");
 			if (context.getCqn().limit().isPresent()) {
 				final CqnLimit limit = context.getCqn().limit().get();
