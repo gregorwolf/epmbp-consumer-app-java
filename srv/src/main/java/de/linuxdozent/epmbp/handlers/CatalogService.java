@@ -51,7 +51,7 @@ public class CatalogService implements EventHandler {
 
 		try {
 			// Maybe needed to get the JWT: AuthenticatedUserClaimProvider.INSTANCE.getUserClaim()
-			// String jwt = AuthenticatedUserClaimProvider.INSTANCE.getUserClaim();
+			String jwt = AuthenticatedUserClaimProvider.INSTANCE.getUserClaim();
 			ErpHttpDestination httpDest = ErpHttpDestinationUtils.getErpHttpDestination("NPL");
 			// final Destination destination = DestinationAccessor.getDestination("NPL");
 			if (context.getCqn().limit().isPresent()) {
@@ -65,6 +65,7 @@ public class CatalogService implements EventHandler {
 				// Create Map containing request header information
 				final Map<String, String> requestHeaders = new HashMap<>();
 				requestHeaders.put("Content-Type", "application/json");
+				requestHeaders.put("Authorization", "Bearer " + jwt);
 
 				final List<EPMBusinessPartner> EPMBusinessPartners = new DefaultZEPMBPSRVEdmxService()
 						.getAllEPMBusinessPartner()
