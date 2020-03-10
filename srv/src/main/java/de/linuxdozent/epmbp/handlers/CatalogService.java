@@ -1,5 +1,6 @@
 package de.linuxdozent.epmbp.handlers;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.sap.cds.feature.auth.AuthenticatedUserClaimProvider;
 import com.sap.cds.ql.cqn.CqnLimit;
 import com.sap.cds.ql.cqn.CqnValue;
+import com.sap.cds.services.ServiceException;
 import com.sap.cds.services.cds.CdsCreateEventContext;
 import com.sap.cds.services.cds.CdsReadEventContext;
 import com.sap.cds.services.cds.CdsService;
@@ -21,7 +23,9 @@ import com.sap.cds.services.handler.annotations.ServiceName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
-import com.sap.cloud.sdk.odatav2.connectivity.ODataException;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
+import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationUtils;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
@@ -30,12 +34,23 @@ import com.sap.cloud.sdk.service.prov.api.response.ErrorResponse;
 import cds.gen.catalogservice.*;
 import de.linuxdozent.vdm.namespaces.zepmbpsrvedmx.EPMBusinessPartner;
 import de.linuxdozent.vdm.services.DefaultZEPMBPSRVEdmxService;
+import de.linuxdozent.vdm.services.ZEPMBPSRVEdmxService;
 
 @Component
 @ServiceName(CatalogService_.CDS_NAME)
 public class CatalogService implements EventHandler {
 	
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
+	
+	// private final Destination destination = DestinationAccessor.getDestination("NPL_SDK");
+	private final ErpHttpDestination httpDest = ErpHttpDestinationUtils.getErpHttpDestination("NPL_SDK");
+	private final TimeLimiterConfiguration timeLimit = TimeLimiterConfiguration.of()
+            .timeoutDuration(Duration.ofSeconds(10));
+
+    private final ResilienceConfiguration resilienceConfiguration =
+            ResilienceConfiguration.of(CatalogService.class)
+			.timeLimiterConfiguration(timeLimit);
+	private final ZEPMBPSRVEdmxService service = new DefaultZEPMBPSRVEdmxService();
 	
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
@@ -52,8 +67,6 @@ public class CatalogService implements EventHandler {
 		try {
 			// Maybe needed to get the JWT: AuthenticatedUserClaimProvider.INSTANCE.getUserClaim()
 			String jwt = AuthenticatedUserClaimProvider.INSTANCE.getUserClaim();
-			ErpHttpDestination httpDest = ErpHttpDestinationUtils.getErpHttpDestination("NPL");
-			// final Destination destination = DestinationAccessor.getDestination("NPL");
 			if (context.getCqn().limit().isPresent()) {
 				final CqnLimit limit = context.getCqn().limit().get();
 				final CqnValue rows = limit.rows();
@@ -65,16 +78,17 @@ public class CatalogService implements EventHandler {
 				// Create Map containing request header information
 				final Map<String, String> requestHeaders = new HashMap<>();
 				requestHeaders.put("Content-Type", "application/json");
-				requestHeaders.put("Authorization", "Bearer " + jwt);
+				requestHeaders.put("Authorization", "Bearer " + jwt + " ");
 
-				final List<EPMBusinessPartner> EPMBusinessPartners = new DefaultZEPMBPSRVEdmxService()
+				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
+                    () -> service
 						.getAllEPMBusinessPartner()
 						.withHeaders(requestHeaders)
 						.onRequestAndImplicitRequests()
 						.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
-						.execute(httpDest)
 						// .execute(destination.asHttp())
-						;
+						.execute(httpDest),
+						resilienceConfiguration);
 				final int size = EPMBusinessPartners.size();
 				logger.info("Number of EPMBusinessPartners: " + size);
 
@@ -89,18 +103,17 @@ public class CatalogService implements EventHandler {
 						epmBPs.put(epmBP.getBusinessPartnerID(), epmBPfields);
 					} catch (final NoSuchEntityFieldException e) {
 						logger.error("Error occurred with the Query operation: " + e.getMessage());
+						throw new ServiceException("An internal server error occurred", e);
 					}
 				}
-			} catch (final ODataException e) {
+			} catch (final Exception e) {
 				logger.error("Error occurred with the Query operation: " + e.getMessage(), e);
-				final ErrorResponse er = ErrorResponse.getBuilder()
-						.setMessage("Error occurred with the Query operation: " + e.getMessage()).setStatusCode(500)
-						.setCause(e).response();
+				throw new ServiceException("An internal server error occurred", e);
 			}
-
 			context.setResult(epmBPs.values());
 		} catch (final DestinationAccessException e) {
 			System.out.println("Message: " + e.getMessage());
+			throw new ServiceException("An internal server error occurred", e);
 		}	
 		
 	}
