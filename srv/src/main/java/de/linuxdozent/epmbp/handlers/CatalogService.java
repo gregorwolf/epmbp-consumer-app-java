@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.sap.cds.feature.auth.AuthenticatedUserClaimProvider;
 import com.sap.cds.ql.cqn.CqnLimit;
 import com.sap.cds.ql.cqn.CqnValue;
 import com.sap.cds.services.cds.CdsCreateEventContext;
@@ -21,6 +22,8 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.odatav2.connectivity.ODataException;
+import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
+import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationUtils;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
 import com.sap.cloud.sdk.service.prov.api.response.ErrorResponse;
 
@@ -48,7 +51,9 @@ public class CatalogService implements EventHandler {
 
 		try {
 			// Maybe needed to get the JWT: AuthenticatedUserClaimProvider.INSTANCE.getUserClaim()
-			final Destination destination = DestinationAccessor.getDestination("NPL");
+			// String jwt = AuthenticatedUserClaimProvider.INSTANCE.getUserClaim();
+			ErpHttpDestination httpDest = ErpHttpDestinationUtils.getErpHttpDestination("NPL");
+			// final Destination destination = DestinationAccessor.getDestination("NPL");
 			if (context.getCqn().limit().isPresent()) {
 				final CqnLimit limit = context.getCqn().limit().get();
 				final CqnValue rows = limit.rows();
@@ -66,7 +71,9 @@ public class CatalogService implements EventHandler {
 						.withHeaders(requestHeaders)
 						.onRequestAndImplicitRequests()
 						.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
-						.execute(destination.asHttp());
+						.execute(httpDest)
+						// .execute(destination.asHttp())
+						;
 				final int size = EPMBusinessPartners.size();
 				logger.info("Number of EPMBusinessPartners: " + size);
 
