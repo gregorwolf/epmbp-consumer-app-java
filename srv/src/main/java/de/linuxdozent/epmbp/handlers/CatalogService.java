@@ -10,8 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.sap.cds.Result;
 import com.sap.cds.feature.auth.AuthenticatedUserClaimProvider;
+import com.sap.cds.ql.Select;
 import com.sap.cds.ql.cqn.CqnLimit;
+import com.sap.cds.ql.cqn.CqnSelect;
 import com.sap.cds.ql.cqn.CqnValue;
 import com.sap.cds.services.ServiceException;
 import com.sap.cds.services.cds.CdsCreateEventContext;
@@ -26,6 +29,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
+import com.sap.cloud.sdk.s4hana.connectivity.DefaultErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationUtils;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
@@ -43,14 +47,16 @@ public class CatalogService implements EventHandler {
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
 	
 	// private final Destination destination = DestinationAccessor.getDestination("NPL_SDK");
-	private final ErpHttpDestination httpDest = ErpHttpDestinationUtils.getErpHttpDestination("NPL_SDK");
+	private final ErpHttpDestination httpDest = DestinationAccessor
+		.getDestination("NPL_SDK").asHttp().decorate(DefaultErpHttpDestination::new);
+	
 	private final TimeLimiterConfiguration timeLimit = TimeLimiterConfiguration.of()
             .timeoutDuration(Duration.ofSeconds(10));
 
     private final ResilienceConfiguration resilienceConfiguration =
             ResilienceConfiguration.of(CatalogService.class)
 			.timeLimiterConfiguration(timeLimit);
-	private final ZEPMBPSRVEdmxService service = new DefaultZEPMBPSRVEdmxService();
+	private final ZEPMBPSRVEdmxService epmBPservice = new DefaultZEPMBPSRVEdmxService();
 	
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
@@ -63,6 +69,13 @@ public class CatalogService implements EventHandler {
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
 	public void onRead(final CdsReadEventContext context) {
 		System.out.println("destinations: " + System.getenv("destinations"));
+		/*
+		// Maybe we have to try it with the CAP service consumption?
+		CdsService service = context.getService();
+		CqnSelect query = Select.from("my.bookshop.EPMBusinessPartners")
+			.columns("BpId","CompanyName","City","Street");
+		Result result = service.run(query);
+		*/
 
 		try {
 			// Maybe needed to get the JWT: AuthenticatedUserClaimProvider.INSTANCE.getUserClaim()
@@ -78,10 +91,10 @@ public class CatalogService implements EventHandler {
 				// Create Map containing request header information
 				final Map<String, String> requestHeaders = new HashMap<>();
 				requestHeaders.put("Content-Type", "application/json");
-				requestHeaders.put("Authorization", "Bearer " + jwt + " ");
+				requestHeaders.put("Authorization", "Bearer " + jwt);
 
 				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
-                    () -> service
+                    () -> epmBPservice
 						.getAllEPMBusinessPartner()
 						.withHeaders(requestHeaders)
 						.onRequestAndImplicitRequests()
