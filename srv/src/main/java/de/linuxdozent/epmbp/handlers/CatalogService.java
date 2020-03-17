@@ -29,6 +29,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
+import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.s4hana.connectivity.DefaultErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationUtils;
@@ -93,7 +94,9 @@ public class CatalogService implements EventHandler {
 				final Map<String, String> requestHeaders = new HashMap<>();
 				requestHeaders.put("Content-Type", "application/json");
 				requestHeaders.put("Authorization", "Bearer " + jwt);
-
+                AuthTokenAccessor.executeWithAuthToken(new AuthToken(JWT.decode(jwt)), () -> {
+                // Code to call VDM service goes here.
+                });
 				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
                     () -> epmBPservice
 						.getAllEPMBusinessPartner()
