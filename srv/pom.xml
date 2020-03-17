@@ -40,13 +40,11 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.12</version>
-    </dependency>
+      </dependency>
     <dependency>
       <groupId>com.sap.cloud.sdk.datamodel</groupId>
       <artifactId>odata-core</artifactId>
-      <version>3.13.0</version>
-    </dependency>
+      </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
