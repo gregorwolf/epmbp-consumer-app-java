@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "sqlite3": "^4.1.1",
-    "@sap/edmx2csn": "^1.0.8",
+    "@sap/edmx2csn": "^1.0.9",
     "@sap/hdi-deploy": "^3.11.6"
   },
   "cds": {
