@@ -1,6 +1,9 @@
 {
   "name": "appadmin",
   "version": "0.0.1",
+  "dependencies": {
+    "@sap/hdi-deploy": "^3.11.6"
+  },
   "description": "",
   "devDependencies": {
     "@sap/grunt-sapui5-bestpractice-build": "1.4.2"
