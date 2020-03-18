@@ -28,8 +28,10 @@ import com.sap.cds.services.cds.CdsService;
 import com.sap.cds.services.handler.EventHandler;
 import com.sap.cds.services.handler.annotations.On;
 import com.sap.cds.services.handler.annotations.ServiceName;
+import com.sap.cloud.sdk.cloudplatform.connectivity.AuthenticationType;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
+import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
@@ -41,6 +43,8 @@ import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.connectivity.ErpHttpDestinationUtils;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
 import com.sap.cloud.sdk.service.prov.api.response.ErrorResponse;
+import com.sap.cloud.sdk.cloudplatform.connectivity.PrincipalPropagationStrategy;
+import com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfHttpDestination;
 
 import cds.gen.catalogservice.*;
 import de.linuxdozent.vdm.namespaces.zepmbpsrvedmx.EPMBusinessPartner;
@@ -52,11 +56,7 @@ import de.linuxdozent.vdm.services.ZEPMBPSRVEdmxService;
 public class CatalogService implements EventHandler {
 	
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
-	
-	// private final Destination destination = DestinationAccessor.getDestination("NPL_SDK");
-	private final ErpHttpDestination httpDest = DestinationAccessor
-		.getDestination("NPL_SDK").asHttp().decorate(DefaultErpHttpDestination::new);
-	
+		
 	private final TimeLimiterConfiguration timeLimit = TimeLimiterConfiguration.of()
             .timeoutDuration(Duration.ofSeconds(10));
 
@@ -66,6 +66,23 @@ public class CatalogService implements EventHandler {
 	private final ZEPMBPSRVEdmxService epmBPservice = new DefaultZEPMBPSRVEdmxService();
 	
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
+
+	public static HttpDestination getHttpDestinationToOnPremSSO() {
+		PrincipalPropagationStrategy strategy = PrincipalPropagationStrategy.getDefaultStrategy();
+		System.out.println("Principal Propagation Strategy: " + strategy.toString());
+		PrincipalPropagationStrategy.setDefaultStrategy(PrincipalPropagationStrategy.COMPATIBILITY);
+		Destination destination = DestinationAccessor.getDestination("NPL_SDK");
+	  
+		// Create a property-wise copy of destination
+		ScpCfHttpDestination.Builder builder = ScpCfHttpDestination.builder("NPL_SDK", destination.asHttp().getUri());
+		for( String propertyName : destination.getPropertyNames() ) {
+			builder.property(propertyName, destination.get(propertyName).getOrNull());
+		}
+	  
+		// Overwrite the authentication type and return
+		builder.authenticationType(AuthenticationType.OAUTH2_USER_TOKEN_EXCHANGE);
+		return builder.build().decorate(DefaultErpHttpDestination::new);
+	  }
 
 	@On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
 	public void onEPMBusinessPartnersCreate(final CdsCreateEventContext context) {
@@ -105,7 +122,7 @@ public class CatalogService implements EventHandler {
     	                    () -> epmBPservice
     							.getAllEPMBusinessPartner()
     							.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
-    							.execute(httpDest),
+    							.execute(getHttpDestinationToOnPremSSO()),
     							resilienceConfiguration);
 					final int size = EPMBusinessPartners.size();
 					logger.info("Number of EPMBusinessPartners: " + size);
