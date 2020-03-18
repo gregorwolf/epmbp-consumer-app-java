@@ -95,9 +95,11 @@ public class CatalogService implements EventHandler {
 				final Map<String, String> requestHeaders = new HashMap<>();
 				requestHeaders.put("Content-Type", "application/json");
 				requestHeaders.put("Authorization", "Bearer " + jwt);
+				/*
                 AuthTokenAccessor.executeWithAuthToken(new AuthToken(JWT.decode(jwt)), () -> {
                 // Code to call VDM service goes here.
                 });
+                */
 				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
                     () -> epmBPservice
 						.getAllEPMBusinessPartner()
@@ -137,3 +139,4 @@ public class CatalogService implements EventHandler {
 	}
 
 }
+
