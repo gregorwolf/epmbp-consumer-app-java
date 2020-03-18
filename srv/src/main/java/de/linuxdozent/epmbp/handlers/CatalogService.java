@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.auth0.jwt.JWT;
 import com.sap.cds.Result;
 import com.sap.cds.feature.auth.AuthenticatedUserClaimProvider;
 import com.sap.cds.ql.Select;
@@ -95,37 +96,32 @@ public class CatalogService implements EventHandler {
 				final Map<String, String> requestHeaders = new HashMap<>();
 				requestHeaders.put("Content-Type", "application/json");
 				requestHeaders.put("Authorization", "Bearer " + jwt);
-				/*
                 AuthTokenAccessor.executeWithAuthToken(new AuthToken(JWT.decode(jwt)), () -> {
-                // Code to call VDM service goes here.
-                });
-                */
-				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
-                    () -> epmBPservice
-						.getAllEPMBusinessPartner()
-						.withHeaders(requestHeaders)
-						.onRequestAndImplicitRequests()
-						.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
-						// .execute(destination.asHttp())
-						.execute(httpDest),
-						resilienceConfiguration);
-				final int size = EPMBusinessPartners.size();
-				logger.info("Number of EPMBusinessPartners: " + size);
+    				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
+    	                    () -> epmBPservice
+    							.getAllEPMBusinessPartner()
+    							.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
+    							.execute(httpDest),
+    							resilienceConfiguration);
+					final int size = EPMBusinessPartners.size();
+					logger.info("Number of EPMBusinessPartners: " + size);
 
-				// How to convert List EPMBusinessPartners to Map epmBPs
-				final Iterator epmBPiterator = EPMBusinessPartners.iterator();
-				while (epmBPiterator.hasNext()) {
-					final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
-					try {
-						Map<String, Object> epmBPfields = new HashMap<>();
-						epmBPfields.put(EPMBusinessPartner.BUSINESS_PARTNER_ID.getFieldName(), epmBP.getBusinessPartnerID());
-						epmBPfields.put(EPMBusinessPartner.COMPANY.getFieldName(), epmBP.getCompany());
-						epmBPs.put(epmBP.getBusinessPartnerID(), epmBPfields);
-					} catch (final NoSuchEntityFieldException e) {
-						logger.error("Error occurred with the Query operation: " + e.getMessage());
-						throw new ServiceException("An internal server error occurred", e);
+					// How to convert List EPMBusinessPartners to Map epmBPs
+					final Iterator epmBPiterator = EPMBusinessPartners.iterator();
+					while (epmBPiterator.hasNext()) {
+						final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
+						try {
+							Map<String, Object> epmBPfields = new HashMap<>();
+							epmBPfields.put(EPMBusinessPartner.BUSINESS_PARTNER_ID.getFieldName(), epmBP.getBusinessPartnerID());
+							epmBPfields.put(EPMBusinessPartner.COMPANY.getFieldName(), epmBP.getCompany());
+							epmBPs.put(epmBP.getBusinessPartnerID(), epmBPfields);
+						} catch (final NoSuchEntityFieldException e) {
+							logger.error("Error occurred with the Query operation: " + e.getMessage());
+							throw new ServiceException("An internal server error occurred", e);
+						}
 					}
-				}
+                });
+
 			} catch (final Exception e) {
 				logger.error("Error occurred with the Query operation: " + e.getMessage(), e);
 				throw new ServiceException("An internal server error occurred", e);
