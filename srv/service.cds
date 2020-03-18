@@ -23,4 +23,8 @@ service CatalogService @(requires: 'authenticated-user') {
     Street
   };
 
+  function getUserDetails() returns String;
+
+  function getUserToken() returns String;
+
 };

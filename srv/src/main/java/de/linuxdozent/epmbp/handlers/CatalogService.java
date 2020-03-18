@@ -5,18 +5,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sap.cds.Result;
 import com.sap.cds.feature.auth.AuthenticatedUserClaimProvider;
 import com.sap.cds.ql.Select;
 import com.sap.cds.ql.cqn.CqnLimit;
 import com.sap.cds.ql.cqn.CqnSelect;
 import com.sap.cds.ql.cqn.CqnValue;
+import com.sap.cds.reflect.CdsFunction;
+import com.sap.cds.services.EventContext;
 import com.sap.cds.services.ServiceException;
 import com.sap.cds.services.cds.CdsCreateEventContext;
 import com.sap.cds.services.cds.CdsReadEventContext;
@@ -64,13 +68,13 @@ public class CatalogService implements EventHandler {
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
 	@On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
-	public void onCreate(final CdsCreateEventContext context) {
+	public void onEPMBusinessPartnersCreate(final CdsCreateEventContext context) {
 		context.getCqn().entries().forEach(e -> epmBPs.put(e.get("BpId"), e));
 		context.setResult(context.getCqn().entries());
 	}
 
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
-	public void onRead(final CdsReadEventContext context) {
+	public void onEPMBusinessPartnersRead(final CdsReadEventContext context) {
 		System.out.println("destinations: " + System.getenv("destinations"));
 		/*
 		// Maybe we have to try it with the CAP service consumption?
@@ -132,6 +136,22 @@ public class CatalogService implements EventHandler {
 			throw new ServiceException("An internal server error occurred", e);
 		}	
 		
+	}
+
+	@On(event = "getUserDetails")
+    public void getUserDetails(GetUserDetailsEventContext context) {
+		String jwt = AuthenticatedUserClaimProvider.INSTANCE.getUserClaim();
+		DecodedJWT jwtToken = JWT.decode(jwt);
+		String userDetails = 
+			jwtToken.getClaim("given_name").asString() + " " +
+			jwtToken.getClaim("family_name").asString();
+		context.setResult(userDetails);
+	}
+
+	@On(event = "getUserToken")
+    public void getUserToken(GetUserTokenEventContext context) {
+		String jwt = AuthenticatedUserClaimProvider.INSTANCE.getUserClaim();
+		context.setResult(jwt);
 	}
 
 }
