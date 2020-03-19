@@ -56,6 +56,8 @@ import de.linuxdozent.vdm.services.ZEPMBPSRVEdmxService;
 public class CatalogService implements EventHandler {
 	
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
+	
+	private final static String destinationName = "NPL_SDK";
 		
 	private final TimeLimiterConfiguration timeLimit = TimeLimiterConfiguration.of()
             .timeoutDuration(Duration.ofSeconds(10));
@@ -68,21 +70,23 @@ public class CatalogService implements EventHandler {
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
 	public static HttpDestination getHttpDestinationToOnPremSSO() {
-		PrincipalPropagationStrategy strategy = PrincipalPropagationStrategy.getDefaultStrategy();
-		System.out.println("Principal Propagation Strategy: " + strategy.toString());
-		PrincipalPropagationStrategy.setDefaultStrategy(PrincipalPropagationStrategy.COMPATIBILITY);
-		Destination destination = DestinationAccessor.getDestination("NPL_SDK");
-	  
-		// Create a property-wise copy of destination
-		ScpCfHttpDestination.Builder builder = ScpCfHttpDestination.builder("NPL_SDK", destination.asHttp().getUri());
-		for( String propertyName : destination.getPropertyNames() ) {
-			builder.property(propertyName, destination.get(propertyName).getOrNull());
-		}
-	  
-		// Overwrite the authentication type and return
-		builder.authenticationType(AuthenticationType.OAUTH2_USER_TOKEN_EXCHANGE);
-		return builder.build().decorate(DefaultErpHttpDestination::new);
+	  Destination destination = DestinationAccessor.tryGetDestination(destinationName).get();
+
+	  String url = destination.get("URL", String.class).getOrNull();
+	  ScpCfHttpDestination.Builder builder = ScpCfHttpDestination.builder(destinationName, url);
+
+	  // set properties
+	  for( String propertyName : destination.getPropertyNames() ) {
+	    builder.property(propertyName, destination.get(propertyName).getOrNull());
 	  }
+
+	  // add missing token (a workaround as of Cloud SDK 3.11, until fixed)
+	  String authToken = AuthTokenAccessor.getCurrentToken().getJwt().getToken();
+	  builder.header("SAP-Connectivity-Authentication", "Bearer " + authToken);
+
+	  // decorate optional S/4 destination properties, e.g. sap-client
+	  return builder.build().decorate(DefaultErpHttpDestination::new);
+	}
 
 	@On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
 	public void onEPMBusinessPartnersCreate(final CdsCreateEventContext context) {
