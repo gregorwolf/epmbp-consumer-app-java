@@ -60,7 +60,7 @@ public class CatalogService implements EventHandler {
 
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
-	public static HttpDestination getHttpDestinationToOnPremSSO(Logger logger) {
+	public static HttpDestination getHttpDestinationToOnPremSSO(String authToken, Logger logger) {
 		logger.info("Start getHttpDestinationToOnPremSSO for destination: " + destinationName);
 		Destination destination = DestinationAccessor.tryGetDestination(destinationName).get();
 
@@ -74,7 +74,6 @@ public class CatalogService implements EventHandler {
 
 		// add missing token (a workaround as of Cloud SDK 3.11, until fixed)
 		try {
-			String authToken = AuthTokenAccessor.getCurrentToken().getJwt().getToken();
 			logger.info("Add authToken as SAP-Connectivity-Authentication header");
 			logger.debug("authToken: " + authToken);
 			builder.header("SAP-Connectivity-Authentication", "Bearer " + authToken);			
@@ -85,10 +84,10 @@ public class CatalogService implements EventHandler {
 		return builder.build().decorate(DefaultErpHttpDestination::new);
 	}
 	
-	private List<EPMBusinessPartner> readEPMBusinessPartner() throws Exception {
+	private List<EPMBusinessPartner> _readEPMBusinessPartner(String jwt) throws Exception {
 		return ResilienceDecorator.executeCallable(() -> epmBPservice.getAllEPMBusinessPartner()
 				.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
-				.execute(getHttpDestinationToOnPremSSO(logger)), resilienceConfiguration);
+				.execute(getHttpDestinationToOnPremSSO(jwt, logger)), resilienceConfiguration);
 	}
 
 	public List<EPMBusinessPartner> readEPMBusinessPartner(String jwt) throws Exception {
@@ -96,11 +95,11 @@ public class CatalogService implements EventHandler {
 			DecodedJWT decodedJWT = JWT.decode(jwt);			
 			AuthTokenAccessor.executeWithAuthToken(new AuthToken(decodedJWT), () -> {
 				logger.info("Call readEPMBusinessPartner in Cloud Foundr");
-				return this.readEPMBusinessPartner();		
+				return this._readEPMBusinessPartner(jwt);		
 			});
 		} catch (JWTDecodeException e) {
 			logger.info("Call readEPMBusinessPartner for local testing");
-			return this.readEPMBusinessPartner();		
+			return this._readEPMBusinessPartner(jwt);		
 		}
 		return null;
 	}
@@ -132,7 +131,7 @@ public class CatalogService implements EventHandler {
 			}
 			System.out.println("Read EPMBusinessPartners:" + context.toString());
 			try {
-				final List<EPMBusinessPartner> EPMBusinessPartners = this.readEPMBusinessPartner();
+				final List<EPMBusinessPartner> EPMBusinessPartners = this.readEPMBusinessPartner(jwt);
 				final int size = EPMBusinessPartners.size();
 				logger.info("Number of EPMBusinessPartners: " + size);
 
