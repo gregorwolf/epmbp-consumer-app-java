@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.sap.cds.Struct;
 import com.sap.cds.feature.auth.AuthenticatedUserClaimProvider;
 import com.sap.cds.ql.cqn.CqnLimit;
 import com.sap.cds.ql.cqn.CqnValue;
@@ -29,6 +30,7 @@ import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessE
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
+import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
 import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.s4hana.connectivity.DefaultErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
@@ -45,7 +47,7 @@ public class CatalogService implements EventHandler {
 	
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
 	
-	private final static String destinationName = "NPL_SDK";
+	private final static String destinationName = "NPL";
 		
 	private final TimeLimiterConfiguration timeLimit = TimeLimiterConfiguration.of()
             .timeoutDuration(Duration.ofSeconds(10));
@@ -105,33 +107,31 @@ public class CatalogService implements EventHandler {
 			System.out.println("Read EPMBusinessPartners:" + context.toString());
 
 			try {
-				// Create Map containing request header information
-				final Map<String, String> requestHeaders = new HashMap<>();
-				requestHeaders.put("Content-Type", "application/json");
-				requestHeaders.put("Authorization", "Bearer " + jwt);
-				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
-	                    () -> epmBPservice
-							.getAllEPMBusinessPartner()
-							.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
-							.execute(getHttpDestinationToOnPremSSO()),
-							resilienceConfiguration);
-				final int size = EPMBusinessPartners.size();
-				logger.info("Number of EPMBusinessPartners: " + size);
-
-				// How to convert List EPMBusinessPartners to Map epmBPs
-				final Iterator epmBPiterator = EPMBusinessPartners.iterator();
-				while (epmBPiterator.hasNext()) {
-					final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
-					try {
-						Map<String, Object> epmBPfields = new HashMap<>();
-						epmBPfields.put(EPMBusinessPartner.BUSINESS_PARTNER_ID.getFieldName(), epmBP.getBusinessPartnerID());
-						epmBPfields.put(EPMBusinessPartner.COMPANY.getFieldName(), epmBP.getCompany());
-						epmBPs.put(epmBP.getBusinessPartnerID(), epmBPfields);
-					} catch (final NoSuchEntityFieldException e) {
-						logger.error("Error occurred with the Query operation: " + e.getMessage());
-						throw new ServiceException("An internal server error occurred", e);
+				AuthTokenAccessor.executeWithAuthToken(new AuthToken(JWT.decode(jwt)), () -> {
+					final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
+		                    () -> epmBPservice
+								.getAllEPMBusinessPartner()
+								.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
+								.execute(getHttpDestinationToOnPremSSO()),
+								resilienceConfiguration);
+					final int size = EPMBusinessPartners.size();
+					logger.info("Number of EPMBusinessPartners: " + size);
+	
+					// How to convert List EPMBusinessPartners to Map epmBPs
+					final Iterator epmBPiterator = EPMBusinessPartners.iterator();
+					while (epmBPiterator.hasNext()) {
+						final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
+						try {
+							EPMBusinessPartners partner = Struct.create(EPMBusinessPartners.class);
+							partner.setBpId(epmBP.getBusinessPartnerID());
+							partner.setCompanyName(epmBP.getCompany());
+							epmBPs.put(epmBP.getBusinessPartnerID(), partner);
+						} catch (final NoSuchEntityFieldException e) {
+							logger.error("Error occurred with the Query operation: " + e.getMessage());
+							throw new ServiceException("An internal server error occurred", e);
+						}
 					}
-				}
+				});
 			} catch (final Exception e) {
 				logger.error("Error occurred with the Query operation: " + e.getMessage(), e);
 				throw new ServiceException("An internal server error occurred", e);
