@@ -95,7 +95,10 @@ public class CatalogService implements EventHandler {
 			DecodedJWT decodedJWT = JWT.decode(jwt);			
 			AuthTokenAccessor.executeWithAuthToken(new AuthToken(decodedJWT), () -> {
 				logger.info("Call readEPMBusinessPartner in Cloud Foundr");
-				return this._readEPMBusinessPartner(jwt);		
+				List<EPMBusinessPartner> EPMBusinessPartners = this._readEPMBusinessPartner(jwt);
+				final int size = EPMBusinessPartners.size();
+				logger.info("Number of EPMBusinessPartners: " + size);
+				return EPMBusinessPartners;
 			});
 		} catch (JWTDecodeException e) {
 			logger.info("Call readEPMBusinessPartner for local testing");
