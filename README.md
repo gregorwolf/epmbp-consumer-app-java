@@ -2,7 +2,7 @@
 
 This example application is still work in progress. It should demonstrate how to use a custom built OData Service with the SAP Cloud SDK for Java and the SAP Cloud Application Programming Model. And that with authentication and principal propagation. So that the service in the ABAP Backend is called not with a technical user, but with the user that was authenticated in the SAP Cloud Platform.
 
-With the help of [Marcel Merkle](https://people.sap.com/marcelmerkle) who answered the question [JWT not recognized by xsuaa-spring-boot-starter](https://answers.sap.com/answers/12996856/view.html) the authenticated call to the Java backend is now working. The on premise backend call using the approuter also works. But when using the same destination with the SAP Cloud SDK it seems that the JWT isn't passed to the backend.
+With the help of [Marcel Merkle](https://people.sap.com/marcelmerkle) who answered the question [JWT not recognized by xsuaa-spring-boot-starter](https://answers.sap.com/answers/12996856/view.html) the authenticated call to the Java service module is now working. The on premise backend call using the approuter also works. And thanks to the answer provided by [Alexander Duemont](https://people.sap.com/alexander.duemont) in [Principal Propagation is not working in the latest version of SAP Cloud SDK](https://stackoverflow.com/questions/60257397/principal-propagation-is-not-working-in-the-latest-version-of-sap-cloud-sdk/60449186#60449186) now also the call to the on premise backend works with principal propagation.
 
 ## Run local
 
