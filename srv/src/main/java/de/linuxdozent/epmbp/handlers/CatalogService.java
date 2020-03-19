@@ -61,6 +61,7 @@ public class CatalogService implements EventHandler {
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
 	public static HttpDestination getHttpDestinationToOnPremSSO(Logger logger) {
+		logger.info("Start getHttpDestinationToOnPremSSO for destination: " + destinationName);
 		Destination destination = DestinationAccessor.tryGetDestination(destinationName).get();
 
 		String url = destination.get("URL", String.class).getOrNull();
@@ -73,19 +74,15 @@ public class CatalogService implements EventHandler {
 
 		// add missing token (a workaround as of Cloud SDK 3.11, until fixed)
 		try {
-			String authToken = AuthTokenAccessor.getCurrentToken().getJwt().getToken();			
+			String authToken = AuthTokenAccessor.getCurrentToken().getJwt().getToken();
+			logger.info("Add authToken as SAP-Connectivity-Authentication header");
+			logger.debug("authToken: " + authToken);
 			builder.header("SAP-Connectivity-Authentication", "Bearer " + authToken);			
 		} catch (AuthTokenAccessException e) {
 			logger.error("Token can't be accessed. This is expected when we run local.");		
 		}
 		// decorate optional S/4 destination properties, e.g. sap-client
 		return builder.build().decorate(DefaultErpHttpDestination::new);
-	}
-
-	@On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
-	public void onEPMBusinessPartnersCreate(final CdsCreateEventContext context) {
-		context.getCqn().entries().forEach(e -> epmBPs.put(e.get("BpId"), e));
-		context.setResult(context.getCqn().entries());
 	}
 	
 	private List<EPMBusinessPartner> readEPMBusinessPartner() throws Exception {
@@ -98,12 +95,20 @@ public class CatalogService implements EventHandler {
 		try {
 			DecodedJWT decodedJWT = JWT.decode(jwt);			
 			AuthTokenAccessor.executeWithAuthToken(new AuthToken(decodedJWT), () -> {
+				logger.info("Call readEPMBusinessPartner in Cloud Foundr");
 				return this.readEPMBusinessPartner();		
 			});
 		} catch (JWTDecodeException e) {
+			logger.info("Call readEPMBusinessPartner for local testing");
 			return this.readEPMBusinessPartner();		
 		}
 		return null;
+	}
+	
+	@On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
+	public void onEPMBusinessPartnersCreate(final CdsCreateEventContext context) {
+		context.getCqn().entries().forEach(e -> epmBPs.put(e.get("BpId"), e));
+		context.setResult(context.getCqn().entries());
 	}
 
 	@On(event = CdsService.EVENT_READ, entity = EPMBusinessPartners_.CDS_NAME)
@@ -118,8 +123,6 @@ public class CatalogService implements EventHandler {
 		 */
 
 		try {
-			// Maybe needed to get the JWT:
-			// AuthenticatedUserClaimProvider.INSTANCE.getUserClaim()
 			String jwt = AuthenticatedUserClaimProvider.INSTANCE.getUserClaim();
 			logger.debug("JWT: " + jwt);
 			if (context.getCqn().limit().isPresent()) {
