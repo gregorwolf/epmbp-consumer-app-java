@@ -26,15 +26,13 @@ import com.sap.cds.services.handler.annotations.ServiceName;
 import com.sap.cloud.sdk.cloudplatform.connectivity.Destination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
+import com.sap.cloud.sdk.cloudplatform.connectivity.PrincipalPropagationStrategy;
 import com.sap.cloud.sdk.cloudplatform.connectivity.exception.DestinationAccessException;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceDecorator;
 import com.sap.cloud.sdk.cloudplatform.resilience.ResilienceConfiguration.TimeLimiterConfiguration;
-import com.sap.cloud.sdk.cloudplatform.security.AuthToken;
-import com.sap.cloud.sdk.cloudplatform.security.AuthTokenAccessor;
 import com.sap.cloud.sdk.s4hana.connectivity.DefaultErpHttpDestination;
 import com.sap.cloud.sdk.s4hana.datamodel.odata.exception.NoSuchEntityFieldException;
-import com.sap.cloud.sdk.cloudplatform.connectivity.ScpCfHttpDestination;
 
 import cds.gen.catalogservice.*;
 import de.linuxdozent.vdm.namespaces.zepmbpsrvedmx.EPMBusinessPartner;
@@ -60,22 +58,9 @@ public class CatalogService implements EventHandler {
 	private final Map<Object, Map<String, Object>> epmBPs = new HashMap<>();
 
 	public static HttpDestination getHttpDestinationToOnPremSSO() {
-	  Destination destination = DestinationAccessor.tryGetDestination(destinationName).get();
-
-	  String url = destination.get("URL", String.class).getOrNull();
-	  ScpCfHttpDestination.Builder builder = ScpCfHttpDestination.builder(destinationName, url);
-
-	  // set properties
-	  for( String propertyName : destination.getPropertyNames() ) {
-	    builder.property(propertyName, destination.get(propertyName).getOrNull());
-	  }
-
-	  // add missing token (a workaround as of Cloud SDK 3.11, until fixed)
-	  String authToken = AuthTokenAccessor.getCurrentToken().getJwt().getToken();
-	  builder.header("SAP-Connectivity-Authentication", "Bearer " + authToken);
-
-	  // decorate optional S/4 destination properties, e.g. sap-client
-	  return builder.build().decorate(DefaultErpHttpDestination::new);
+        PrincipalPropagationStrategy.setDefaultStrategy(PrincipalPropagationStrategy.COMPATIBILITY);
+        Destination destination = DestinationAccessor.getDestination(destinationName);
+        return destination.asHttp().decorate(DefaultErpHttpDestination::new);
 	}
 
 	@On(event = CdsService.EVENT_CREATE, entity = EPMBusinessPartners_.CDS_NAME)
@@ -107,31 +92,29 @@ public class CatalogService implements EventHandler {
 			System.out.println("Read EPMBusinessPartners:" + context.toString());
 
 			try {
-				AuthTokenAccessor.executeWithAuthToken(new AuthToken(JWT.decode(jwt)), () -> {
-					final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
-		                    () -> epmBPservice
-								.getAllEPMBusinessPartner()
-								.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
-								.execute(getHttpDestinationToOnPremSSO()),
-								resilienceConfiguration);
-					final int size = EPMBusinessPartners.size();
-					logger.info("Number of EPMBusinessPartners: " + size);
-	
-					// How to convert List EPMBusinessPartners to Map epmBPs
-					final Iterator epmBPiterator = EPMBusinessPartners.iterator();
-					while (epmBPiterator.hasNext()) {
-						final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
-						try {
-							EPMBusinessPartners partner = Struct.create(EPMBusinessPartners.class);
-							partner.setBpId(epmBP.getBusinessPartnerID());
-							partner.setCompanyName(epmBP.getCompany());
-							epmBPs.put(epmBP.getBusinessPartnerID(), partner);
-						} catch (final NoSuchEntityFieldException e) {
-							logger.error("Error occurred with the Query operation: " + e.getMessage());
-							throw new ServiceException("An internal server error occurred", e);
-						}
+				final List<EPMBusinessPartner> EPMBusinessPartners =  ResilienceDecorator.executeCallable(
+	                    () -> epmBPservice
+							.getAllEPMBusinessPartner()
+							.select(EPMBusinessPartner.BUSINESS_PARTNER_ID, EPMBusinessPartner.COMPANY)
+							.execute(getHttpDestinationToOnPremSSO()),
+							resilienceConfiguration);
+				final int size = EPMBusinessPartners.size();
+				logger.info("Number of EPMBusinessPartners: " + size);
+
+				// How to convert List EPMBusinessPartners to Map epmBPs
+				final Iterator epmBPiterator = EPMBusinessPartners.iterator();
+				while (epmBPiterator.hasNext()) {
+					final EPMBusinessPartner epmBP = (EPMBusinessPartner) epmBPiterator.next();
+					try {
+						EPMBusinessPartners partner = Struct.create(EPMBusinessPartners.class);
+						partner.setBpId(epmBP.getBusinessPartnerID());
+						partner.setCompanyName(epmBP.getCompany());
+						epmBPs.put(epmBP.getBusinessPartnerID(), partner);
+					} catch (final NoSuchEntityFieldException e) {
+						logger.error("Error occurred with the Query operation: " + e.getMessage());
+						throw new ServiceException("An internal server error occurred", e);
 					}
-				});
+				}
 			} catch (final Exception e) {
 				logger.error("Error occurred with the Query operation: " + e.getMessage(), e);
 				throw new ServiceException("An internal server error occurred", e);
