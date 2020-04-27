@@ -12,6 +12,13 @@
       "destination": "NPL"
     },
     {
+      "source": "/v2/(.*)$",
+      "target": "/v2/$1",
+      "authenticationType": "xsuaa",
+      "destination": "srv_api_v2",
+      "csrfProtection": true
+    },
+    {
       "source": "/odata/(.*)$",
       "target": "/odata/$1",
       "authenticationType": "xsuaa",

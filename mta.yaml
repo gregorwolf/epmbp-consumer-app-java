@@ -7,7 +7,7 @@ ID: epmbp-consumer-app-java
 version: 1.0.0
 description: "A simple CAP project."
 parameters:
-  enable-parallel-deployments: true  
+  enable-parallel-deployments: true
 build-parameters:
   before-all:
    - builder: custom
@@ -30,7 +30,7 @@ modules:
     type: java
     path: srv
     properties:
-      EXIT: 1  # required by deploy.js task to terminate 
+      EXIT: 1  # required by deploy.js task to terminate
     build-parameters:
       builder: custom
       commands: [ mvn clean package ]
@@ -44,6 +44,23 @@ modules:
       - name: epmbp-consumer-app-java-uaa
       - name: epmbp-consumer-app-java-destination-service
       - name: epmbp-consumer-app-java-connectivity-service
+ # ---------------- OData V2 PROXY MODULE ----------------------
+  - name: epmbp-consumer-app-java-srv-proxy
+    type: nodejs
+    path: srv-proxy
+    build-parameters:
+      ignore: ["node_modules/"]
+    parameters:
+      memory: 256M
+      disk-quota: 1G
+    provides:
+      - name: srv_api_v2
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: srv_api
+        properties:
+          srv_api_url: ~{url}
  # --------------------- UI MODULE ------------------------
   - name: epmbp-consumer-app-java-app
     type: nodejs
@@ -57,6 +74,13 @@ modules:
       - name: epmbp-consumer-app-java-destination-service
       - name: epmbp-consumer-app-java-connectivity-service
       - name: epmbp-consumer-app-java-uaa
+      - name: srv_api_v2
+        group: destinations
+        properties:
+          name: srv_api_v2
+          url: '~{url}'
+          strictSSL: false
+          forwardAuthToken: true
       - name: srv_api
         group: destinations
         properties:

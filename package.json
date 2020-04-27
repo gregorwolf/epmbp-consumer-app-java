@@ -6,7 +6,9 @@
   "repository": "<Add your repository here>",
   "scripts": {
     "setup": "npm install && npm run build && npm run deploy",
-    "build": "cds build/all --clean",
+    "build": "npm run build:cds && npm run build:copy",
+    "build:cds": "cds build/all --clean",
+    "build:copy": "copyfiles -f srv/src/main/resources/edmx/csn.json srv-proxy/gen/",
     "build:xs-security": "cds compile srv/ --to xsuaa  > xs-security.json",
     "build:deploy:cf": "npm run build:cf && npm run deploy:cf",
     "build:cf": "mbt build -p cf",
@@ -18,13 +20,14 @@
     "start:cloud": "mvn spring-boot:run -Dspring-boot.run.profiles=cloud"
   },
   "dependencies": {
-    "@sap/cds": "^3.31.2",
+    "@sap/cds": "^3.33.1",
     "hdb": "^0.17.1"
   },
   "devDependencies": {
     "sqlite3": "^4.1.1",
     "@sap/edmx2csn": "^1.0.9",
-    "@sap/hdi-deploy": "^3.11.6"
+    "@sap/hdi-deploy": "^3.11.6",
+    "copyfiles": "latest"
   },
   "cds": {
     "build": {
