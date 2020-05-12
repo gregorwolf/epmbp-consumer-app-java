@@ -17,11 +17,11 @@
 
 		<!-- DEPENDENCIES VERSION -->
 		<jdk.version>1.8</jdk.version>
-		<cds.services.version>1.4.0</cds.services.version>
+		<cds.services.version>1.5.1</cds.services.version>
 		<cds4j.version>1.7.0</cds4j.version>
-		<spring.boot.version>2.2.6.RELEASE</spring.boot.version>
+		<spring.boot.version>2.2.7.RELEASE</spring.boot.version>
 
-		<node.version>v10.4.1</node.version>
+		<node.version>v10.19.0</node.version>
 		<node.url>https://nodejs.org/dist/</node.url>
 	</properties>
 
@@ -44,7 +44,7 @@
             <dependency>
                 <groupId>com.sap.cloud.sdk</groupId>
                 <artifactId>sdk-modules-bom</artifactId>
-                <version>3.17.2</version>
+                <version>3.19.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>			
