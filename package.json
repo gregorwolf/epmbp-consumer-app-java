@@ -27,7 +27,7 @@
     "@sap/edmx2csn": "^1.0.9",
     "@sap/hdi-deploy": "^3.11.9",
     "copyfiles": "latest",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "5.0.0"
   },
   "cds": {
     "build": {
