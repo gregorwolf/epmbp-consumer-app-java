@@ -9,7 +9,7 @@
     {
       "source": "/sap/(.*)$",
       "target": "/sap/$1",
-      "destination": "NPL"
+      "destination": "S4H_CC"
     },
     {
       "source": "/v2/(.*)$",

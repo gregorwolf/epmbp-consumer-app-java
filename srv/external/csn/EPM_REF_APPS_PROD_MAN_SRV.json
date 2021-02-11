@@ -1,0 +1,1102 @@
+{
+    "version": {
+        "csn": "1.0"
+    },
+    "meta": {
+        "creator": "edmx2csn Converter"
+    },
+    "definitions": {
+        "EPM_REF_APPS_PROD_MAN_SRV": {
+            "kind": "service"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel": {
+            "kind": "context"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.Supplier": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.Supplier"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 80
+                },
+                "Phone": {
+                    "type": "cds.String",
+                    "length": 30
+                },
+                "Email": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "WebAddress": {
+                    "type": "cds.LargeString"
+                },
+                "FormattedAddress": {
+                    "type": "cds.String",
+                    "length": 129
+                },
+                "FormattedContactName": {
+                    "type": "cds.String",
+                    "length": 81
+                },
+                "ContactPhone1": {
+                    "type": "cds.String",
+                    "length": 30
+                },
+                "ContactPhone2": {
+                    "type": "cds.String",
+                    "length": 30
+                },
+                "ContactEmail": {
+                    "type": "cds.String",
+                    "length": 255
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.Supplier": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 80
+                },
+                "Phone": {
+                    "type": "cds.String",
+                    "length": 30
+                },
+                "Email": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "WebAddress": {
+                    "type": "cds.LargeString"
+                },
+                "FormattedAddress": {
+                    "type": "cds.String",
+                    "length": 129
+                },
+                "FormattedContactName": {
+                    "type": "cds.String",
+                    "length": 81
+                },
+                "ContactPhone1": {
+                    "type": "cds.String",
+                    "length": 30
+                },
+                "ContactPhone2": {
+                    "type": "cds.String",
+                    "length": 30
+                },
+                "ContactEmail": {
+                    "type": "cds.String",
+                    "length": 255
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.Product": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.Product"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "CurrencyCode": {
+                    "type": "cds.String",
+                    "length": 5
+                },
+                "StockQuantity": {
+                    "type": "cds.Integer"
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "Description": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "SubCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SubCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SupplierId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "SupplierName": {
+                    "type": "cds.String",
+                    "length": 80
+                },
+                "LastModified": {
+                    "type": "cds.Timestamp"
+                },
+                "Price": {
+                    "type": "cds.Decimal",
+                    "precision": 15,
+                    "scale": 2
+                },
+                "DimensionHeight": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionWidth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionDepth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionUnit": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "ImageUrl": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "QuantityUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "MeasureUnit": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "AverageRating": {
+                    "type": "cds.Decimal",
+                    "precision": 4,
+                    "scale": 2
+                },
+                "RatingCount": {
+                    "type": "cds.Integer"
+                },
+                "WeightMeasure": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "WeightUnit": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Supplier": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.Supplier",
+                    "on": [
+                        {
+                            "ref": [
+                                "Supplier",
+                                "Id"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "SupplierId"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.Product": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "CurrencyCode": {
+                    "type": "cds.String",
+                    "length": 5
+                },
+                "StockQuantity": {
+                    "type": "cds.Integer"
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "Description": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "SubCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SubCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SupplierId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "SupplierName": {
+                    "type": "cds.String",
+                    "length": 80
+                },
+                "LastModified": {
+                    "type": "cds.Timestamp"
+                },
+                "Price": {
+                    "type": "cds.Decimal",
+                    "precision": 15,
+                    "scale": 2
+                },
+                "DimensionHeight": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionWidth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionDepth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionUnit": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "ImageUrl": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "QuantityUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "MeasureUnit": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "AverageRating": {
+                    "type": "cds.Decimal",
+                    "precision": 4,
+                    "scale": 2
+                },
+                "RatingCount": {
+                    "type": "cds.Integer"
+                },
+                "WeightMeasure": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "WeightUnit": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Supplier": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.Supplier",
+                    "on": [
+                        {
+                            "ref": [
+                                "Supplier",
+                                "Id"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "SupplierId"
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.ProductDraft": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.ProductDraft"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "LastModified": {
+                    "type": "cds.Timestamp"
+                },
+                "IsNewProduct": {
+                    "type": "cds.Boolean"
+                },
+                "IsDirty": {
+                    "type": "cds.Boolean"
+                },
+                "ProductId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "Description": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "DimensionUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "DimensionHeight": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionWidth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionDepth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "WeightUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "WeightMeasure": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "Price": {
+                    "type": "cds.Decimal",
+                    "precision": 15,
+                    "scale": 2
+                },
+                "CurrencyCode": {
+                    "type": "cds.String",
+                    "length": 5
+                },
+                "QuantityUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "ImageUrl": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "SupplierId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "SupplierName": {
+                    "type": "cds.String",
+                    "length": 80
+                },
+                "SubCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SubCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "CreatedAt": {
+                    "type": "cds.Timestamp"
+                },
+                "CreatedBy": {
+                    "type": "cds.String",
+                    "length": 12
+                },
+                "ExpiresAt": {
+                    "type": "cds.Timestamp"
+                },
+                "Images": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.ImageDraft",
+                    "cardinality": {
+                        "max": "*"
+                    }
+                },
+                "SubCategory": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.SubCategory",
+                    "on": [
+                        {
+                            "ref": [
+                                "SubCategory",
+                                "Id"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "SubCategoryId"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.ProductDraft": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "LastModified": {
+                    "type": "cds.Timestamp"
+                },
+                "IsNewProduct": {
+                    "type": "cds.Boolean"
+                },
+                "IsDirty": {
+                    "type": "cds.Boolean"
+                },
+                "ProductId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "Description": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "DimensionUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "DimensionHeight": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionWidth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "DimensionDepth": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "WeightUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "WeightMeasure": {
+                    "type": "cds.Decimal",
+                    "precision": 13,
+                    "scale": 3
+                },
+                "Price": {
+                    "type": "cds.Decimal",
+                    "precision": 15,
+                    "scale": 2
+                },
+                "CurrencyCode": {
+                    "type": "cds.String",
+                    "length": 5
+                },
+                "QuantityUnit": {
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "ImageUrl": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "SupplierId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "SupplierName": {
+                    "type": "cds.String",
+                    "length": 80
+                },
+                "SubCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SubCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "CreatedAt": {
+                    "type": "cds.Timestamp"
+                },
+                "CreatedBy": {
+                    "type": "cds.String",
+                    "length": 12
+                },
+                "ExpiresAt": {
+                    "type": "cds.Timestamp"
+                },
+                "Images": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.ImageDraft",
+                    "cardinality": {
+                        "max": "*"
+                    }
+                },
+                "SubCategory": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.SubCategory",
+                    "on": [
+                        {
+                            "ref": [
+                                "SubCategory",
+                                "Id"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "SubCategoryId"
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.ImageDraft": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.ImageDraft"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.UUID"
+                },
+                "CreatedBy": {
+                    "type": "cds.String",
+                    "length": 81
+                },
+                "FileName": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "IsDeletable": {
+                    "type": "cds.Boolean"
+                },
+                "IsModifiable": {
+                    "type": "cds.Boolean"
+                },
+                "LastModified": {
+                    "type": "cds.Timestamp"
+                },
+                "ProductId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "MimeType": {
+                    "type": "cds.String",
+                    "length": 100
+                },
+                "CreatedAt": {
+                    "type": "cds.Timestamp"
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.ImageDraft": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.UUID"
+                },
+                "CreatedBy": {
+                    "type": "cds.String",
+                    "length": 81
+                },
+                "FileName": {
+                    "type": "cds.String",
+                    "length": 255
+                },
+                "IsDeletable": {
+                    "type": "cds.Boolean"
+                },
+                "IsModifiable": {
+                    "type": "cds.Boolean"
+                },
+                "LastModified": {
+                    "type": "cds.Timestamp"
+                },
+                "ProductId": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "MimeType": {
+                    "type": "cds.String",
+                    "length": 100
+                },
+                "CreatedAt": {
+                    "type": "cds.Timestamp"
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.MainCategory": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.MainCategory"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SubCategories": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.SubCategory",
+                    "cardinality": {
+                        "max": "*"
+                    },
+                    "on": [
+                        {
+                            "ref": [
+                                "SubCategories",
+                                "MainCategoryId"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "Id"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.MainCategory": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "SubCategories": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.SubCategory",
+                    "cardinality": {
+                        "max": "*"
+                    },
+                    "on": [
+                        {
+                            "ref": [
+                                "SubCategories",
+                                "MainCategoryId"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "Id"
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.SubCategory": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.SubCategory"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategory": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.MainCategory",
+                    "on": [
+                        {
+                            "ref": [
+                                "MainCategory",
+                                "Id"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "MainCategoryId"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.SubCategory": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Id": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "Name": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryId": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategoryName": {
+                    "type": "cds.String",
+                    "length": 40
+                },
+                "MainCategory": {
+                    "type": "cds.Association",
+                    "target": "EPM_REF_APPS_PROD_MAN_SRV.MainCategory",
+                    "on": [
+                        {
+                            "ref": [
+                                "MainCategory",
+                                "Id"
+                            ]
+                        },
+                        "=",
+                        {
+                            "ref": [
+                                "MainCategoryId"
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.Currency": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.Currency"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Code": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 40
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.Currency": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Code": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 40
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.DimensionUnit": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.DimensionUnit"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Unit": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Shorttext": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 30
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.DimensionUnit": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Unit": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Shorttext": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 30
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.QuantityUnit": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.QuantityUnit"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Unit": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Shorttext": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 30
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.QuantityUnit": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Unit": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Shorttext": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 30
+                }
+            }
+        },
+        "EPM_REF_APPS_PROD_MAN_SRV.WeightUnit": {
+            "kind": "entity",
+            "query": {
+                "SELECT": {
+                    "from": {
+                        "ref": [
+                            "EPM_REF_APPS_PROD_MAN_SRVModel.WeightUnit"
+                        ]
+                    }
+                }
+            },
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Unit": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Shorttext": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 30
+                }
+            },
+            "$syntax": "projection"
+        },
+        "EPM_REF_APPS_PROD_MAN_SRVModel.WeightUnit": {
+            "kind": "entity",
+            "@cds.persistence.skip": true,
+            "elements": {
+                "Unit": {
+                    "key": true,
+                    "type": "cds.String",
+                    "length": 3
+                },
+                "Shorttext": {
+                    "type": "cds.String",
+                    "length": 10
+                },
+                "Text": {
+                    "type": "cds.String",
+                    "length": 30
+                }
+            }
+        }
+    }
+}

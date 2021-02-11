@@ -10,7 +10,7 @@ To run against the local mock service [epmbp-mock-service](https://github.com/gr
 
 ```bash
 #!/bin/bash
-export destinations='[{name: "NPL", url: "http://localhost:3000"}]'
+export destinations='[{name: "S4H_CC", url: "http://localhost:3000"}]'
 ```
 
 The authentication data is maintained in the file **srv/src/main/resources/application.yaml**

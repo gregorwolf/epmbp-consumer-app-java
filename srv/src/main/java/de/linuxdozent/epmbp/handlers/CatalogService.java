@@ -49,7 +49,7 @@ public class CatalogService implements EventHandler {
 
 	Logger logger = LoggerFactory.getLogger(CatalogService.class);
 
-	private final static String destinationName = "NPL";
+	private final static String destinationName = "S4H_CC";
 
 	private final TimeLimiterConfiguration timeLimit = TimeLimiterConfiguration.of()
 			.timeoutDuration(Duration.ofSeconds(10));

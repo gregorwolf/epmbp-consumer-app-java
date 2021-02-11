@@ -1,4 +1,5 @@
 using my.bookshop as my from '../db/extended';
+using EPM_REF_APPS_PROD_MAN_SRV as EPM_API from './external/csn/EPM_REF_APPS_PROD_MAN_SRV.json';
 using ZEPM_BP_SRV as EPM_BP_API from './external/csn/ZEPM_BP_SRV.json';
 
 service CatalogService @(requires: 'authenticated-user') {
@@ -21,6 +22,13 @@ service CatalogService @(requires: 'authenticated-user') {
     CompanyName,
     City,
     Street
+  };
+
+  @cds.persistence.skip
+  entity Product as projection on EPM_API.Product {
+    key Id,
+    Name,
+    Description
   };
 
   function getUserDetails() returns String;
