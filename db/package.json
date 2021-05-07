@@ -1,10 +1,10 @@
 {
   "name": "deploy",
   "dependencies": {
-    "@sap/hdi-deploy": "^3.11.6"
+    "@sap/hdi-deploy": "^3.11.10"
   },
   "engines": {
-    "node": "^10"
+    "node": "^12"
   },
   "scripts": {
     "postinstall": "node .build.js",

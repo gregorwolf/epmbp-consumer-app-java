@@ -22,14 +22,14 @@
     "start:cloud": "mvn spring-boot:run -Dspring-boot.run.profiles=cloud"
   },
   "dependencies": {
-    "@sap/cds": "^3.34.1",
-    "hdb": "^0.17.1"
+    "@sap/cds": "^5.0.6",
+    "hdb": "^0.18.3"
   },
   "devDependencies": {
     "@sap/edmx2csn": "^1.0.9",
-    "@sap/hdi-deploy": "^3.11.9",
+    "@sap/hdi-deploy": "^4.0.5",
     "copyfiles": "latest",
-    "sqlite3": "5.0.0"
+    "sqlite3": "5.0.2"
   },
   "cds": {
     "build": {
