@@ -6,6 +6,10 @@
   "repository": "<Add your repository here>",
   "scripts": {
     "setup": "npm install && npm run build && npm run deploy",
+    "update": "run-p update:**",
+    "update:root": "npm update",
+    "update:app": "cd app && npm update",
+    "update:srv-proxy": "cd srv-proxy && npm update",
     "build": "npm run build:cds && npm run build:copy",
     "build:cds": "cds build/all --clean",
     "build:copy": "copyfiles -f srv/src/main/resources/edmx/csn.json srv-proxy/gen/",
@@ -22,13 +26,14 @@
     "start:cloud": "mvn spring-boot:run -Dspring-boot.run.profiles=cloud"
   },
   "dependencies": {
-    "@sap/cds": "^5.7.4",
+    "@sap/cds": "^5.8.4",
     "hdb": "^0.19.1"
   },
   "devDependencies": {
     "@sap/edmx2csn": "^1.0.9",
-    "@sap/hdi-deploy": "^4.0.5",
+    "@sap/hdi-deploy": "^4.3.0",
     "copyfiles": "latest",
+    "npm-run-all": "^4.1.5",
     "sqlite3": "5.0.2"
   },
   "cds": {
