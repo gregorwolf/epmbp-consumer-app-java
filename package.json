@@ -34,7 +34,7 @@
     "@sap/hdi-deploy": "^4.3.0",
     "copyfiles": "latest",
     "npm-run-all": "^4.1.5",
-    "sqlite3": "5.0.2"
+    "sqlite3": "5.0.3"
   },
   "cds": {
     "build": {
