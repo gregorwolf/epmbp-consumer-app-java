@@ -2,7 +2,7 @@
   "name": "appadmin",
   "version": "0.0.1",
   "dependencies": {
-    "@sap/approuter": "10.14.2"
+    "@sap/approuter": "^15"
   },
   "description": "",
   "devDependencies": {
